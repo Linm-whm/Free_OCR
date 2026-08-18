@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+
+# 用户运行过程中生成的数据
+/data/uploads/*
+/data/templates/*
+!/data/uploads/.gitkeep
+!/data/templates/.gitkeep

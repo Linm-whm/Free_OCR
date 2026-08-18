@@ -1,0 +1,308 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Microsoft YaHei", Arial, sans-serif;
+    color: #111;
+}
+
+.container {
+    width: 95%;
+    height: 90vh;
+    margin: auto;
+    display: flex;
+}
+
+.left {
+    width: 66%;
+    min-width: 0;
+}
+
+.right {
+    width: 34%;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.top {
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.image-box {
+    width: 95%;
+    height: calc(100% - 125px);
+    margin: 10px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+}
+
+#canvas {
+    /* Canvas 不再强制缩回容器，放大图片后允许出现滚动区域。 */
+    max-width: none;
+    max-height: none;
+    flex: 0 0 auto;
+}
+
+button,
+select,
+input {
+    font-family: inherit;
+}
+
+button {
+    min-height: 35px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+#message {
+    position: fixed;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 18px;
+    display: none;
+    z-index: 999;
+}
+
+.right h2 {
+    margin-top: 0;
+}
+
+.template-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fafafa;
+}
+
+.template-panel label {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+#templateSelect {
+    width: 100%;
+    height: 35px;
+    font-size: 16px;
+    color: #000;
+}
+
+#templateSelect.template-select-placeholder {
+    color: #999;
+}
+
+.template-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.template-name {
+    width: 100%;
+    height: 35px;
+    padding: 5px 8px;
+    font-size: 16px;
+}
+
+.template-tip {
+    margin: 2px 0 0;
+    color: #666;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.recognition-panel h3 {
+    margin-top: 0;
+}
+
+.recognition-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.recognition-item {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: #fff;
+}
+
+.recognition-title {
+    font-weight: bold;
+    margin-bottom: 6px;
+    font-size: 16px;
+}
+
+.recognition-info {
+    font-size: 14px;
+    line-height: 1.8;
+    word-break: break-all;
+}
+
+.recognition-text {
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.recognition-buttons {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+}
+
+.recognition-buttons button {
+    min-height: 30px;
+    font-size: 14px;
+}
+
+.recognition-error {
+    margin-top: 4px;
+    color: #c00;
+}
+
+.area-create {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.area-create label {
+    font-size: 15px;
+    margin-top: 3px;
+}
+
+.area-create input,
+.area-create select {
+    width: 100%;
+    height: 35px;
+    padding: 5px 8px;
+    font-size: 15px;
+}
+
+
+/* 图片调整工具栏：位于图片下方，采用无边框图标工具 */
+.image-adjust-toolbar {
+    width: 95%;
+    margin: 0 20px 10px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    flex-wrap: wrap;
+    user-select: none;
+}
+
+.image-adjust-toolbar .icon-tool {
+    width: 34px;
+    height: 34px;
+    min-height: 34px;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: #444;
+    font-size: 22px;
+    line-height: 34px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+
+.image-adjust-toolbar .icon-tool:hover {
+    background: #f0f0f0;
+    color: #111;
+}
+
+.image-adjust-toolbar .image-drag-tool {
+    font-size: 21px;
+    cursor: grab;
+}
+
+.image-adjust-toolbar .image-drag-tool.active {
+    background: #e9e9e9;
+    color: #111;
+}
+
+.image-adjust-toolbar .icon-tool:active {
+    background: #e6e6e6;
+    transform: scale(0.92);
+}
+
+.image-adjust-toolbar .zoom-value {
+    min-width: 48px;
+    text-align: center;
+    font-size: 13px;
+    color: #666;
+}
+
+.image-adjust-toolbar .rotation-slider-wrap {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 280px;
+    margin: 0 4px;
+}
+
+.image-adjust-toolbar .rotation-slider {
+    width: 210px;
+    height: 4px;
+    margin: 0;
+    accent-color: #555;
+    cursor: grab;
+}
+
+.image-adjust-toolbar .rotation-slider:active {
+    cursor: grabbing;
+}
+
+.image-adjust-toolbar .rotation-slider-label {
+    font-size: 11px;
+    color: #999;
+    white-space: nowrap;
+}
+
+.image-adjust-toolbar .rotation-value {
+    min-width: 40px;
+    text-align: center;
+    font-size: 13px;
+    color: #666;
+}
+
+.image-adjust-toolbar .tool-divider {
+    width: 1px;
+    height: 22px;
+    margin: 0 6px;
+    background: #ddd;
+}
+
+.image-adjust-toolbar .apply-tool {
+    color: #2f7d32;
+    font-size: 23px;
+}
+
+.image-adjust-toolbar .apply-tool:hover {
+    color: #1f5e22;
+}
+
+@media (max-width: 900px) {
+    .image-adjust-toolbar {
+        justify-content: flex-start;
+    }
+}

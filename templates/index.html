@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free_OCR</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div id="message"></div>
+
+    <div class="container">
+        <!-- 左侧：图片编辑区 -->
+        <main class="left">
+            <div class="top">
+                <input
+                    type="file"
+                    id="imageUpload"
+                    accept="image/*"
+                    hidden
+                    onchange="uploadImage()"
+                >
+
+                <button type="button" onclick="handleUploadClick()">
+                    上传图片
+                </button>
+
+
+            </div>
+
+            <div class="image-box">
+                <canvas id="canvas"></canvas>
+            </div>
+
+            <!-- 图片调整：放在图片下方，采用无边框图标工具栏 -->
+            <div id="imageAdjustToolbar" class="image-adjust-toolbar" style="display:none;">
+                <button type="button" class="icon-tool" onclick="adjustImageZoom(-0.1)" title="缩小" aria-label="缩小">−</button>
+                <span id="imageZoomValue" class="zoom-value">100%</span>
+                <button type="button" class="icon-tool" onclick="adjustImageZoom(0.1)" title="放大" aria-label="放大">＋</button>
+
+                <span class="tool-divider"></span>
+
+                <button type="button" class="icon-tool" onclick="rotateImage(-90)" title="逆时针旋转90°" aria-label="逆时针旋转90°">↶</button>
+
+                <div class="rotation-slider-wrap" title="拖动滑块进行细致旋转">
+                    <span class="rotation-slider-label">-15°</span>
+                    <input
+                        id="imageRotationSlider"
+                        class="rotation-slider"
+                        type="range"
+                        min="-15"
+                        max="15"
+                        step="0.1"
+                        value="0"
+                        oninput="setImageRotationFromSlider(this.value)"
+                        aria-label="图片细致旋转角度"
+                    >
+                    <span class="rotation-slider-label">+15°</span>
+                    <span id="imageRotationValue" class="rotation-value">0°</span>
+                </div>
+
+                <button type="button" class="icon-tool" onclick="rotateImage(90)" title="顺时针旋转90°" aria-label="顺时针旋转90°">↷</button>
+
+                <span class="tool-divider"></span>
+
+                <button id="imageDragTool" type="button" class="icon-tool image-drag-tool" onclick="toggleImageDragMode()" title="图片拖动：点击后按住图片拖动" aria-label="图片拖动">↖</button>
+
+                <span class="tool-divider"></span>
+
+                <button type="button" class="icon-tool" onclick="mirrorImageHorizontal()" title="左右镜像" aria-label="左右镜像">⇋</button>
+                <button type="button" class="icon-tool" onclick="mirrorImageVertical()" title="上下镜像" aria-label="上下镜像">⇵</button>
+                <button type="button" class="icon-tool" onclick="resetImageTransform()" title="重置图片调整" aria-label="重置图片调整">↺</button>
+
+                <span class="tool-divider"></span>
+
+                <button type="button" class="icon-tool apply-tool" onclick="applyImageTransform()" title="应用调整" aria-label="应用调整">✓</button>
+            </div>
+        </main>
+
+        <!-- 右侧：模板与识别结果 -->
+        <aside class="right">
+            <h2>模板与识别结果</h2>
+
+            <section class="template-panel">
+                <label for="templateSelect">已有模板</label>
+
+                <select
+                    id="templateSelect"
+                    onchange="loadSelectedTemplate()"
+                    onfocus="templateSelectFocus()"
+                    onblur="templateSelectBlur()"
+                >
+                    <option value="" disabled selected hidden>请选择模板</option>
+                </select>
+
+                <!-- 新建/保存和删除放在一起，符合模板管理操作习惯 -->
+                <div class="template-buttons">
+                    <button id="templateActionBtn" type="button" onclick="handleTemplateAction()">
+                        新建模板
+                    </button>
+                    <button type="button" onclick="deleteSelectedTemplate()">
+                        删除模板
+                    </button>
+                </div>
+
+                <input
+                    id="templateName"
+                    class="template-name"
+                    placeholder="模板名称，例如：身份证"
+                    style="display:none;"
+                >
+
+                <p class="template-tip">
+                    新建模板后输入模板名称并创建识别区域；选择已有模板后会自动恢复区域并开始识别。
+                </p>
+            </section>
+
+            <hr>
+
+            <section class="area-create-panel">
+                <h3>识别区域设置</h3>
+
+                <div class="area-create">
+                    <button type="button" onclick="startSelect()">选择框选区域</button>
+
+                    <button
+                        id="resetBtn"
+                        type="button"
+                        onclick="resetLastArea()"
+                        style="display:none;"
+                    >
+                        重新框选
+                    </button>
+
+                    <label for="areaName">区域名称</label>
+                    <input
+                        type="text"
+                        id="areaName"
+                        placeholder="例如：姓名"
+                    >
+
+                    <label for="areaType">识别类型</label>
+                    <select id="areaType">
+                        <option value="number">纯数字</option>
+                        <option value="chinese">纯中文</option>
+                        <option value="english">纯英文</option>
+                        <option value="chinese_english">中英文混合</option>
+                        <option value="chinese_number">中文 + 数字</option>
+                        <option value="english_number">英文 + 数字</option>
+                        <option value="chinese_english_number">中英文 + 数字</option>
+                    </select>
+
+                    <button type="button" onclick="saveCurrentArea()">保存区域</button>
+                </div>
+            </section>
+
+            <hr>
+
+            <section class="recognition-panel">
+                <h3>识别结果</h3>
+
+                <div id="recognitionList" class="recognition-list">
+                    <p>暂无识别区域</p>
+                </div>
+            </section>
+        </aside>
+    </div>
+
+    <!--
+        前端按职责拆分：
+        canvas-editor.js   图片上传、Canvas框选/移动/缩放、区域编辑
+        ocr-manager.js     单区域即时OCR、模板批量OCR、结果渲染
+        template-manager.js 模板创建、保存、加载、删除
+        main.js            页面入口
+    -->
+    <script src="/static/js/canvas-editor.js"></script>
+    <script src="/static/js/ocr-manager.js"></script>
+    <script src="/static/js/template-manager.js"></script>
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
