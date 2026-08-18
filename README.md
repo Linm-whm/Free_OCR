@@ -1374,9 +1374,10 @@ TXT
 
 # License
 
-当前项目没有指定开源许可证。
+This project is licensed under the MIT License.
 
-如果后续需要公开发布项目，建议根据项目实际使用的第三方组件及发布方式选择合适的 License，例如 MIT 等。
+Third-party libraries, OCR models, and other dependencies
+are subject to their respective licenses.
 
 ---
 
